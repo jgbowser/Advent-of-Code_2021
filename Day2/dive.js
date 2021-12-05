@@ -1041,11 +1041,10 @@ console.log("product of coordinates: ", x * y);
 function moveAndAim(step, position) {
   const [ direction ] = Object.keys(step);
   const [value ] = Object.values(step);
-  const { aim } = position
   switch (direction) {
     case 'forward':
       position.x += value;
-      position.y += (value * aim);
+      position.y += (value * position.aim);
       break;
     case 'down':
       position.aim += value;
