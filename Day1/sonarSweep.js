@@ -2001,7 +2001,7 @@ const depths = [
   9899,
 ];
 
-// find the number of depth increases
+// Part 1: find the number of depth increases between each element in the array
 function sonarSweep(input) {
   let increases = 0;
   for (let i = 1; i < input.length; i++) {
@@ -2014,3 +2014,16 @@ function sonarSweep(input) {
 };
 
 console.log(sonarSweep(depths));
+
+// Part 2: find the number of depth increases from 3 measurement sliding windows from the original data 
+
+function calculateWindowSums(input) {
+  const sums = [];
+  for (let i = 1; i < input.length - 1; i++) {
+    sums.push(input[i - 1] + input[i] + input[i + 1]);
+  };
+  return sums;
+};
+
+const windowSums = calculateWindowSums(depths);
+console.log(sonarSweep(windowSums));
