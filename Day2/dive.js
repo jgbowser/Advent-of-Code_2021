@@ -1035,3 +1035,39 @@ function getDestination(plot) {
 const { x, y } = getDestination(coursePlot);
 
 console.log("product of coordinates: ", x * y);
+
+// Part 2: Now with aim!
+
+function moveAndAim(step, position) {
+  const [ direction ] = Object.keys(step);
+  const [value ] = Object.values(step);
+  const { aim } = position
+  switch (direction) {
+    case 'forward':
+      position.x += value;
+      position.y += (value * aim);
+      break;
+    case 'down':
+      position.aim += value;
+      break;
+    case 'up':
+      position.aim -= value;
+      break;
+    default:
+      console.log("Something went wrong...");
+  }
+};
+
+function getDestination2(plot) {
+  const currentPosition = { x: 0, y: 0, aim: 0 };
+
+  plot.forEach(step => {
+    moveAndAim(step, currentPosition);
+  });
+
+  return currentPosition;
+}
+
+const res = getDestination2(coursePlot);
+
+console.log("product of coordinates: ", res.x * res.y);
