@@ -2026,4 +2026,5 @@ function calculateWindowSums(input) {
 };
 
 const windowSums = calculateWindowSums(depths);
+
 console.log(sonarSweep(windowSums));
