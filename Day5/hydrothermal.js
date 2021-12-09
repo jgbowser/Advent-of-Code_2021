@@ -11,6 +11,8 @@ function parsePoints(points) {
   return points.map(p => p.split(","));
 }
 
+// Part 1: using only horizontal and vertical lines determine the amount of danger zones
+
 function filterOutDiagonals(allPoints) {
   return allPoints.filter(set => {
     const parsedSet = parsePoints(set);
@@ -54,6 +56,36 @@ function interpolateVerticalLines(points, start, end, constant) {
   return line;
 };
 
+function interpolateDiagonalLines(points, x1, x2, y1, y2) {
+  const line = [points[0], points[1]];
+  let newY = y1;
+
+  if(x1 > x2) {
+    for(let i = x1 - 1; i > x2; i--) {
+      
+      if(y1 > y2) {
+        newY--
+      } else {
+        newY++
+      };
+
+      line.push(`${i},${newY}`);
+    }
+  } else {
+    for(let i = x1 + 1; i < x2; i++) {
+      if(y1 > y2) {
+        newY--
+      } else {
+        newY++
+      }
+
+      line.push(`${i},${newY}`)
+    }
+  }
+
+  return line;
+}
+
 function interpolateLines(allPoints) {
   // sort each set of points in ascending order to make things a bit more manageable
   allPoints.sort();
@@ -68,10 +100,10 @@ function interpolateLines(allPoints) {
     // for each set of points first check if it is changing horizontally or vertically
     if (x1 === x2) {
       interpolatedLines.push(interpolateVerticalLines(set, y1, y2, x1));
-    }
-
-    if(y1 === y2) {
+    } else if (y1 === y2) {
       interpolatedLines.push(interpolateHorizontalLines(set, x1, x2, y1));
+    } else {
+      interpolatedLines.push(interpolateDiagonalLines(set, x1, x2, y1, y2))
     }
   })
   // once we have all interpolated lines, flatten the array and loop through incrementing counter any time we see a duplicate for the first time
@@ -106,3 +138,8 @@ const filteredPoints = filterOutDiagonals(plotPoints);
 const interpolatedData = interpolateLines(filteredPoints);
 const flattenedSortedData = interpolatedData.flat().sort();
 console.log(countDangerZones(flattenedSortedData));
+
+// Part 2: Count all danger zones using horizontal, vertical, and diagonal lines
+
+const interpolatedDataWithDiagonals = interpolateLines(plotPoints);
+console.log(countDangerZones(interpolatedDataWithDiagonals.flat().sort()));
