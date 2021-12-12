@@ -84,6 +84,7 @@ function getDigitsFromPattern(patternLine) {
     .filter(p => p.length === 6)
     .map(p => p.split("").sort().join(""));
 
+  // 3 is the only 5 segment digit that contains both segments in 1
   const three = fiveSegmentCodes
     .filter(p => {
       return (
@@ -93,10 +94,13 @@ function getDigitsFromPattern(patternLine) {
     })
     .join("");
 
+  // keep track of easy to decipher segments so that we can add and subtract them to make finding numbers easier
   const segments = {};
 
+  // top segment is found by removing the common segments between 7 and 1
   segments.t = seven.replace(one[0], "").replace(one[1], "");
 
+  // now we can find the bottom segment by adding the top segment to 4 and removing the common segments between it and 9
   const fourPlusTopSegment = four + segments.t;
 
   for (let i = 0; i < sixSegmentCodes.length; i++) {
@@ -113,6 +117,7 @@ function getDigitsFromPattern(patternLine) {
     }
   }
 
+  // Now we add the top and bottom segments to 1 and remove common segments between it and 3 to find the middle segment
   const onePlusTopAndBottom = one + segments.t + segments.b;
 
   segments.m = three
@@ -121,10 +126,12 @@ function getDigitsFromPattern(patternLine) {
     .replace(onePlusTopAndBottom[2], "")
     .replace(onePlusTopAndBottom[3], "");
 
+  // Zero is only 6 segment digit without the middle segment
   const zero = sixSegmentCodes
     .filter(c => c.indexOf(segments.m) === -1)
     .join("");
 
+  // find the top left segment by removing common segments between 3 and 5 (the only 6 seg  digit with 1 segment remaining after the compare/remove with 3)
   for (let i = 0; i < sixSegmentCodes.length; i++) {
     const potentialSegChar = sixSegmentCodes[i]
       .replace(three[0], "")
@@ -139,10 +146,14 @@ function getDigitsFromPattern(patternLine) {
     }
   }
 
+  // probably could have gotten this more easily earlier when finding the bottom segment *shrugs*
+  // add top left segment to 3 and you've got 9
   const nine = (three + segments.tl).split("").sort().join("");
 
+  // construct 5 (minus the bottom right segment). We need bottom right to be able to differentiate some remaining numbers
   const almostFive = segments.t + segments.m + segments.b + segments.tl;
 
+  //since we have 5 (with 1 missing segment) we know that if we remove these almost-five-segments from every digit made of five segments, the one with 1 segment left at the end is 5, and that segment is bottom right
   for (let i = 0; i < fiveSegmentCodes.length; i++) {
     const potentialSegChar = fiveSegmentCodes[i]
       .replace(almostFive[0], "")
@@ -156,6 +167,7 @@ function getDigitsFromPattern(patternLine) {
     }
   }
 
+  // we have all the segment chars to construct 5, again probably could have gotten this easier right above this....but it's 3:30am and I am losing my mind...
   const five = (
     segments.t +
     segments.tl +
@@ -167,16 +179,19 @@ function getDigitsFromPattern(patternLine) {
     .sort()
     .join("");
 
+  // we know 2 of the 3 5 segment digits, the remaining one has to be 2
   const two = fiveSegmentCodes
     .filter(p => p !== three && p !== five)
     .sort()
     .join("");
 
+  // we know 2 of the six segment digits, the remaining one has to be 6
   const six = sixSegmentCodes
     .filter(p => p !== zero && p !== nine)
     .sort()
     .join("");
 
+  // thats it! all the numbers are accounted for, return an object with the digit's sorted segment code as the key and the number it corresponds to as the value
   const numbers = {};
   numbers[zero] = 0;
   numbers[one] = 1;
